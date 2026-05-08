@@ -1,247 +1,385 @@
-export default function VitaSyncAI() {
-  const vitals = [
-    { label: 'Heart Rate', value: '72 bpm', icon: '❤️' },
-    { label: 'Sleep', value: '7h 12m', icon: '🌙' },
-    { label: 'Hydration', value: '1.4L', icon: '💧' },
-    { label: 'Stress', value: 'Moderate', icon: '🧠' },
-  ];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VitaSync AI — Personal Health Intelligence</title>
 
-  const insights = [
-    'AI predicts burnout risk may increase if sleep drops below 6 hours.',
-    'Your productivity is highest between 9 AM and 1 PM.',
-    'Hydration levels are improving this week.',
-    'Vitamin D may be lower than optimal based on recent symptoms.',
-  ];
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  const missions = [
-    { title: 'Drink 2L Water', progress: 70 },
-    { title: 'Sleep Before 11PM', progress: 40 },
-    { title: 'Walk 10,000 Steps', progress: 90 },
-    { title: 'Meditate 10 Minutes', progress: 100 },
-  ];
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-  return (
-    <div className="min-h-screen bg-black text-white p-6 font-sans">
-      <div className="max-w-7xl mx-auto">
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #050816;
+      overflow-x: hidden;
+    }
 
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+    h1, h2, h3 {
+      font-family: 'Syne', sans-serif;
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .glow {
+      box-shadow: 0 0 60px rgba(34,211,238,0.35);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #22d3ee, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .pulse-ring {
+      animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp 1s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body class="text-white">
+
+  <div class="max-w-7xl mx-auto px-6 py-10 fade-up">
+
+    <!-- HEADER -->
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10">
+      <div>
+        <p class="uppercase tracking-[0.3em] text-cyan-400 text-sm mb-3">
+          AI-Powered Personal Health Intelligence
+        </p>
+
+        <h1 class="text-5xl md:text-7xl font-extrabold gradient-text leading-tight">
+          VitaSync AI
+        </h1>
+
+        <p class="text-gray-400 mt-4 max-w-2xl text-lg leading-relaxed">
+          Your futuristic health ecosystem that understands your body, mind,
+          productivity, nutrition, posture, stress, and wellness patterns.
+        </p>
+      </div>
+
+      <button class="px-7 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all duration-300 font-semibold glow">
+        Launch AI Assistant
+      </button>
+    </div>
+
+    <!-- HERO GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
+      <!-- HEALTH TWIN -->
+      <div class="glass rounded-[30px] p-7">
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-3xl font-bold">Health Twin</h2>
+          <span class="text-cyan-400">LIVE</span>
+        </div>
+
+        <div class="flex flex-col items-center py-6">
+          <div class="w-52 h-52 rounded-full bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center text-8xl pulse-ring glow">
+            🧍
+          </div>
+
+          <h3 class="text-5xl font-bold mt-8">82%</h3>
+          <p class="text-gray-400 mt-2">Overall Health Score</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-6">
+          <div class="bg-black/40 rounded-2xl p-4 border border-cyan-500/10">
+            <p class="text-gray-400 text-sm">Energy</p>
+            <h4 class="text-2xl font-bold text-green-400 mt-2">High</h4>
+          </div>
+
+          <div class="bg-black/40 rounded-2xl p-4 border border-cyan-500/10">
+            <p class="text-gray-400 text-sm">Recovery</p>
+            <h4 class="text-2xl font-bold text-cyan-400 mt-2">Good</h4>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="lg:col-span-2 glass rounded-[30px] p-7">
+
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
-            <p className="text-sm text-gray-400">AI-Powered Personal Health Intelligence</p>
-            <h1 className="text-5xl font-bold mt-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              VitaSync AI
-            </h1>
+            <h2 class="text-3xl font-bold">Today's Dashboard</h2>
+            <p class="text-gray-400 mt-2">Real-time wellness intelligence powered by AI.</p>
           </div>
 
-          <button className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold shadow-lg hover:scale-105 transition">
-            Launch Voice Assistant
-          </button>
-        </div>
-
-        {/* HERO */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-
-          {/* HEALTH TWIN */}
-          <div className="bg-zinc-900 rounded-3xl p-6 border border-cyan-500/20 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">Health Twin</h2>
-              <span className="text-cyan-400">Live</span>
-            </div>
-
-            <div className="flex flex-col items-center justify-center py-8">
-              <div className="w-44 h-44 rounded-full bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center text-6xl shadow-[0_0_60px_rgba(34,211,238,0.4)] animate-pulse">
-                🧍
-              </div>
-
-              <div className="mt-6 text-center">
-                <h3 className="text-3xl font-bold">82%</h3>
-                <p className="text-gray-400 mt-1">Overall Health Score</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mt-6">
-              <div className="bg-black/40 rounded-2xl p-3 border border-zinc-800">
-                <p className="text-gray-400 text-sm">Energy</p>
-                <h4 className="text-xl font-bold text-green-400">High</h4>
-              </div>
-
-              <div className="bg-black/40 rounded-2xl p-3 border border-zinc-800">
-                <p className="text-gray-400 text-sm">Recovery</p>
-                <h4 className="text-xl font-bold text-cyan-400">Good</h4>
-              </div>
-            </div>
-          </div>
-
-          {/* VITALS */}
-          <div className="lg:col-span-2 bg-zinc-900 rounded-3xl p-6 border border-zinc-800 shadow-xl">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Today's Health Dashboard</h2>
-              <div className="px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm">
-                Predictive AI Active
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              {vitals.map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-black/40 rounded-2xl p-5 border border-zinc-800 hover:border-cyan-500/40 transition"
-                >
-                  <div className="text-3xl mb-4">{item.icon}</div>
-                  <h3 className="text-2xl font-bold">{item.value}</h3>
-                  <p className="text-gray-400 mt-1">{item.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* AI GRAPH MOCKUP */}
-            <div className="mt-8 bg-black/40 rounded-3xl p-6 border border-zinc-800">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Burnout Prediction</h3>
-                <span className="text-yellow-400">Moderate Risk</span>
-              </div>
-
-              <div className="h-44 flex items-end gap-3">
-                {[40, 55, 60, 72, 65, 80, 58].map((h, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 rounded-t-2xl bg-gradient-to-t from-cyan-600 to-blue-400"
-                    style={{ height: `${h}%` }}
-                  />
-                ))}
-              </div>
-            </div>
+          <div class="px-5 py-3 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm">
+            Predictive AI Active
           </div>
         </div>
 
-        {/* FEATURES */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
-          {/* AI INSIGHTS */}
-          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-6">Predictive AI Insights</h2>
-
-            <div className="space-y-4">
-              {insights.map((insight, index) => (
-                <div
-                  key={index}
-                  className="bg-black/40 border border-zinc-800 rounded-2xl p-4 hover:border-cyan-500/30 transition"
-                >
-                  <div className="flex gap-3 items-start">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-                      ✦
-                    </div>
-
-                    <div>
-                      <p className="text-white leading-relaxed">{insight}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div class="bg-black/40 rounded-3xl p-5 border border-white/5 hover:border-cyan-500/30 transition-all duration-300">
+            <div class="text-4xl mb-5">❤️</div>
+            <h3 class="text-3xl font-bold">72 bpm</h3>
+            <p class="text-gray-400 mt-2">Heart Rate</p>
           </div>
 
-          {/* FOOD + POSTURE */}
-          <div className="space-y-6">
+          <div class="bg-black/40 rounded-3xl p-5 border border-white/5 hover:border-cyan-500/30 transition-all duration-300">
+            <div class="text-4xl mb-5">🌙</div>
+            <h3 class="text-3xl font-bold">7h 12m</h3>
+            <p class="text-gray-400 mt-2">Sleep</p>
+          </div>
 
-            <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
-              <div className="flex justify-between items-center mb-5">
-                <h2 className="text-2xl font-bold">AI Food Scanner</h2>
-                <span className="text-cyan-400">Beta</span>
-              </div>
+          <div class="bg-black/40 rounded-3xl p-5 border border-white/5 hover:border-cyan-500/30 transition-all duration-300">
+            <div class="text-4xl mb-5">💧</div>
+            <h3 class="text-3xl font-bold">1.4L</h3>
+            <p class="text-gray-400 mt-2">Hydration</p>
+          </div>
 
-              <div className="border-2 border-dashed border-cyan-500/30 rounded-3xl p-10 text-center hover:border-cyan-400 transition cursor-pointer">
-                <div className="text-6xl mb-4">📸</div>
-                <h3 className="text-xl font-bold">Upload Food Image</h3>
-                <p className="text-gray-400 mt-2">
-                  AI analyzes calories, oil, sugar, protein, and nutrients.
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
-              <h2 className="text-2xl font-bold mb-5">Posture Intelligence</h2>
-
-              <div className="flex items-center gap-6">
-                <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-cyan-500/20 flex items-center justify-center text-6xl">
-                  🧍
-                </div>
-
-                <div>
-                  <h3 className="text-4xl font-bold text-cyan-400">71%</h3>
-                  <p className="text-gray-400 mt-1">Posture Score</p>
-
-                  <div className="mt-4 space-y-2 text-sm text-gray-300">
-                    <p>• Slight forward neck tilt detected</p>
-                    <p>• Eye distance is optimal</p>
-                    <p>• Stretch reminder recommended</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div class="bg-black/40 rounded-3xl p-5 border border-white/5 hover:border-cyan-500/30 transition-all duration-300">
+            <div class="text-4xl mb-5">🧠</div>
+            <h3 class="text-3xl font-bold">Moderate</h3>
+            <p class="text-gray-400 mt-2">Stress</p>
           </div>
         </div>
 
-        {/* FAMILY + GAMIFICATION */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- GRAPH -->
+        <div class="mt-10 bg-black/40 rounded-[30px] p-6 border border-white/5">
+          <div class="flex justify-between items-center mb-5">
+            <h3 class="text-2xl font-bold">Burnout Prediction</h3>
+            <span class="text-yellow-400">Moderate Risk</span>
+          </div>
 
-          {/* FAMILY */}
-          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-6">Family Health Hub</h2>
+          <div class="h-56 flex items-end gap-4">
+            <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[45%]"></div>
+            <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[60%]"></div>
+            <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[72%]"></div>
+            <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[85%]"></div>
+            <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[65%]"></div>
+            <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[90%]"></div>
+            <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[55%]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { name: 'Mum', status: 'Healthy', emoji: '👩' },
-                { name: 'Dad', status: 'Monitor BP', emoji: '👨' },
-                { name: 'Nanu', status: 'Missed Pill', emoji: '👴' },
-                { name: 'Brother', status: 'Active', emoji: '👦' },
-              ].map((member, index) => (
-                <div
-                  key={index}
-                  className="bg-black/40 border border-zinc-800 rounded-2xl p-4 text-center hover:border-cyan-500/30 transition"
-                >
-                  <div className="text-5xl mb-3">{member.emoji}</div>
-                  <h3 className="text-lg font-bold">{member.name}</h3>
-                  <p className="text-gray-400 mt-1">{member.status}</p>
-                </div>
-              ))}
+    <!-- FEATURES -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+      <!-- AI INSIGHTS -->
+      <div class="glass rounded-[30px] p-7">
+        <h2 class="text-3xl font-bold mb-7">Predictive AI Insights</h2>
+
+        <div class="space-y-5">
+
+          <div class="bg-black/40 rounded-2xl p-5 border border-white/5">
+            <div class="flex gap-4 items-start">
+              <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-xl">
+                ✦
+              </div>
+
+              <p class="text-gray-300 leading-relaxed">
+                AI predicts burnout risk may increase if sleep drops below 6 hours.
+              </p>
             </div>
           </div>
 
-          {/* MISSIONS */}
-          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Wellness XP</h2>
-              <span className="text-cyan-400">Level 14</span>
+          <div class="bg-black/40 rounded-2xl p-5 border border-white/5">
+            <div class="flex gap-4 items-start">
+              <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-xl">
+                ✦
+              </div>
+
+              <p class="text-gray-300 leading-relaxed">
+                Your productivity is highest between 9 AM and 1 PM.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-black/40 rounded-2xl p-5 border border-white/5">
+            <div class="flex gap-4 items-start">
+              <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-xl">
+                ✦
+              </div>
+
+              <p class="text-gray-300 leading-relaxed">
+                Hydration levels improved 16% this week.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOD + POSTURE -->
+      <div class="space-y-6">
+
+        <div class="glass rounded-[30px] p-7">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold">AI Food Scanner</h2>
+            <span class="text-cyan-400">Beta</span>
+          </div>
+
+          <div class="border-2 border-dashed border-cyan-500/20 rounded-[30px] p-14 text-center hover:border-cyan-400 transition-all duration-300 cursor-pointer">
+            <div class="text-7xl mb-5">📸</div>
+            <h3 class="text-2xl font-bold">Upload Food Image</h3>
+            <p class="text-gray-400 mt-3 max-w-md mx-auto leading-relaxed">
+              AI analyzes calories, oil, protein, sugar, sodium, and nutrition quality.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass rounded-[30px] p-7">
+          <h2 class="text-3xl font-bold mb-6">Posture Intelligence</h2>
+
+          <div class="flex flex-col md:flex-row items-center gap-8">
+
+            <div class="w-40 h-40 rounded-[30px] bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/20 flex items-center justify-center text-7xl">
+              🧍
             </div>
 
-            <div className="w-full h-4 bg-black/50 rounded-full overflow-hidden mb-6">
-              <div className="h-full w-[68%] bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full" />
-            </div>
+            <div>
+              <h3 class="text-5xl font-bold text-cyan-400">71%</h3>
+              <p class="text-gray-400 mt-2">Posture Score</p>
 
-            <div className="space-y-4">
-              {missions.map((mission, index) => (
-                <div
-                  key={index}
-                  className="bg-black/40 border border-zinc-800 rounded-2xl p-4"
-                >
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-semibold">{mission.title}</h3>
-                    <span className="text-cyan-400">{mission.progress}%</span>
-                  </div>
-
-                  <div className="w-full h-3 bg-zinc-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"
-                      style={{ width: `${mission.progress}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
+              <div class="mt-5 space-y-3 text-gray-300">
+                <p>• Slight forward neck tilt detected</p>
+                <p>• Eye distance is optimal</p>
+                <p>• Stretch reminder recommended</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
-}
+
+    <!-- FAMILY + XP -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- FAMILY -->
+      <div class="glass rounded-[30px] p-7">
+        <h2 class="text-3xl font-bold mb-7">Family Health Hub</h2>
+
+        <div class="grid grid-cols-2 gap-5">
+
+          <div class="bg-black/40 rounded-3xl p-5 text-center border border-white/5">
+            <div class="text-6xl mb-4">👩</div>
+            <h3 class="text-xl font-bold">Mum</h3>
+            <p class="text-gray-400 mt-2">Healthy</p>
+          </div>
+
+          <div class="bg-black/40 rounded-3xl p-5 text-center border border-white/5">
+            <div class="text-6xl mb-4">👨</div>
+            <h3 class="text-xl font-bold">Dad</h3>
+            <p class="text-gray-400 mt-2">Monitor BP</p>
+          </div>
+
+          <div class="bg-black/40 rounded-3xl p-5 text-center border border-white/5">
+            <div class="text-6xl mb-4">👴</div>
+            <h3 class="text-xl font-bold">Nanu</h3>
+            <p class="text-gray-400 mt-2">Missed Pill</p>
+          </div>
+
+          <div class="bg-black/40 rounded-3xl p-5 text-center border border-white/5">
+            <div class="text-6xl mb-4">👦</div>
+            <h3 class="text-xl font-bold">Brother</h3>
+            <p class="text-gray-400 mt-2">Active</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- XP -->
+      <div class="glass rounded-[30px] p-7">
+
+        <div class="flex justify-between items-center mb-7">
+          <h2 class="text-3xl font-bold">Wellness XP</h2>
+          <span class="text-cyan-400">Level 14</span>
+        </div>
+
+        <div class="w-full h-5 rounded-full bg-black/50 overflow-hidden mb-8">
+          <div class="h-full w-[68%] bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
+        </div>
+
+        <div class="space-y-5">
+
+          <div>
+            <div class="flex justify-between mb-2">
+              <span>Drink 2L Water</span>
+              <span class="text-cyan-400">70%</span>
+            </div>
+
+            <div class="w-full h-3 bg-black/50 rounded-full overflow-hidden">
+              <div class="h-full w-[70%] bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-2">
+              <span>Sleep Before 11PM</span>
+              <span class="text-cyan-400">40%</span>
+            </div>
+
+            <div class="w-full h-3 bg-black/50 rounded-full overflow-hidden">
+              <div class="h-full w-[40%] bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-2">
+              <span>Walk 10,000 Steps</span>
+              <span class="text-cyan-400">90%</span>
+            </div>
+
+            <div class="w-full h-3 bg-black/50 rounded-full overflow-hidden">
+              <div class="h-full w-[90%] bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="text-center py-14">
+      <h2 class="text-4xl font-bold gradient-text">
+        The Future of Health Intelligence
+      </h2>
+
+      <p class="text-gray-500 mt-4 text-lg max-w-2xl mx-auto">
+        VitaSync AI combines wellness, AI, predictive analytics, and human-centered healthcare into one futuristic ecosystem.
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
