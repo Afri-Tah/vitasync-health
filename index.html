@@ -1,500 +1,209 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VitaSync AI — Personal Health Intelligence</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VitaSync AI — Personal Health Intelligence</title>
 
-  <script src="https://cdn.tailwindcss.com">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-// SAVE USER DATA
-function saveData() {
-  const data = {
-    sleep: document.getElementById('sleep').value,
-    water: document.getElementById('water').value,
-    stress: document.getElementById('stress').value,
-    steps: document.getElementById('steps').value
-  };
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-  localStorage.setItem('vitaSyncData', JSON.stringify(data));
+<style>
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #050816;
+  color: white;
+  overflow-x: hidden;
+}
+h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 
-  alert('Health data saved successfully.');
+.glass {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-// LOAD USER DATA
-function loadData() {
-  const saved = JSON.parse(localStorage.getItem('vitaSyncData'));
-
-  if(saved) {
-    document.getElementById('sleep').value = saved.sleep;
-    document.getElementById('water').value = saved.water;
-    document.getElementById('stress').value = saved.stress;
-    document.getElementById('steps').value = saved.steps;
-
-    updateDashboard();
-  }
+.gradient-text {
+  background: linear-gradient(to right, #22d3ee, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-window.onload = loadData;
-
-// DARK/LIGHT MODE
-function toggleTheme() {
-  document.body.classList.toggle('bg-white');
-  document.body.classList.toggle('text-black');
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-// DAILY STREAK
-let streak = localStorage.getItem('vitaStreak') || 1;
-document.addEventListener('DOMContentLoaded', () => {
-  const streakElement = document.getElementById('streakDisplay');
-  if(streakElement) {
-    streakElement.innerText = streak + ' Day Streak';
-  }
-});
-
-// WATER REMINDER
-setInterval(() => {
-  console.log('Hydration Reminder Triggered');
-}, 60000);
-
-// SIMULATED AI CHAT
-function openAssistant() {
-  const response = prompt('Ask VitaSync AI anything about your health:');
-
-  if(response) {
-    alert('VitaSync AI suggests improving hydration, sleep consistency, and stress management.');
-  }
+.pulse { animation: pulse 3s infinite; }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
-
-</script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: #050816;
-      overflow-x: hidden;
-      color: white;
-    }
-
-    h1,h2,h3,h4 {
-      font-family: 'Syne', sans-serif;
-    }
-
-    .glass {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .gradient-text {
-      background: linear-gradient(to right, #22d3ee, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .glow {
-      box-shadow: 0 0 60px rgba(34,211,238,0.25);
-    }
-
-    .pulse {
-      animation: pulse 3s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    input, select {
-      outline: none;
-    }
-
-    .bg-grid {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-  </style>
+</style>
 </head>
 
 <body>
 
 <div class="bg-grid"></div>
 
+<!-- CHAT MODAL -->
+<div id="chatModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+  <div class="glass rounded-[30px] p-8 w-[90%] max-w-xl">
+    <div class="flex justify-between mb-6">
+      <h2 class="text-2xl font-bold">VitaSync AI</h2>
+      <button onclick="closeChat()">✕</button>
+    </div>
+
+    <div class="bg-black/40 p-4 rounded-2xl mb-4">
+      Hello! Ask me anything about your health.
+    </div>
+
+    <div class="flex gap-3">
+      <input id="chatInput" class="flex-1 bg-black/40 p-3 rounded-2xl" placeholder="Ask..." />
+      <button onclick="sendChat()" class="bg-cyan-500 text-black px-4 rounded-2xl">Send</button>
+    </div>
+  </div>
+</div>
+
 <div class="max-w-7xl mx-auto px-6 py-10">
 
-  <!-- HEADER -->
-  <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10">
-
-    <div>
-      <p class="uppercase tracking-[0.3em] text-cyan-400 text-sm mb-3">
-        AI-Powered Personal Health Intelligence
-      </p>
-
-      <h1 class="text-5xl md:text-7xl font-extrabold gradient-text leading-tight">
-        VitaSync AI
-      </h1>
-
-      <p class="text-gray-400 mt-4 max-w-2xl text-lg leading-relaxed">
-        Your futuristic AI-powered health ecosystem.
-      </p>
-    </div>
-
-    <button onclick="openAssistant()"
-      class="px-7 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all duration-300 font-semibold glow">
-      Launch AI Assistant
-    </button>
-
+<!-- HEADER -->
+<div class="flex justify-between items-center mb-10">
+  <div>
+    <p class="text-cyan-400 uppercase tracking-widest text-sm">AI Health System</p>
+    <h1 class="text-6xl font-bold gradient-text">VitaSync AI</h1>
   </div>
 
-  <!-- USER INPUT SECTION -->
-  <div class="glass rounded-[30px] p-8 mb-8">
+  <button onclick="openChat()" class="bg-cyan-500 text-black px-6 py-3 rounded-2xl font-semibold">
+    AI Assistant
+  </button>
+</div>
 
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-3xl font-bold">Daily Health Input</h2>
-      <span class="text-cyan-400">Interactive</span>
-    </div>
+<!-- INPUT -->
+<div class="glass p-6 rounded-3xl mb-6 grid md:grid-cols-4 gap-4">
+  <input id="sleep" type="number" value="7" class="p-3 bg-black/40 rounded-xl" placeholder="Sleep">
+  <input id="water" type="number" value="1.5" class="p-3 bg-black/40 rounded-xl" placeholder="Water">
+  <select id="stress" class="p-3 bg-black/40 rounded-xl">
+    <option>Low</option>
+    <option selected>Moderate</option>
+    <option>High</option>
+  </select>
+  <input id="steps" type="number" value="6000" class="p-3 bg-black/40 rounded-xl" placeholder="Steps">
+</div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<button onclick="updateDashboard()" class="bg-cyan-500 text-black px-6 py-3 rounded-2xl mb-10">
+  Update Dashboard
+</button>
 
-      <div>
-        <label class="block mb-2 text-gray-400">Sleep Hours</label>
-        <input id="sleep" type="number" min="0" max="24" value="7"
-          class="w-full bg-black/40 border border-cyan-500/20 rounded-2xl p-4 text-white">
-      </div>
+<!-- DASHBOARD -->
+<div class="grid lg:grid-cols-3 gap-6">
 
-      <div>
-        <label class="block mb-2 text-gray-400">Water Intake (L)</label>
-        <input id="water" type="number" step="0.1" value="1.5"
-          class="w-full bg-black/40 border border-cyan-500/20 rounded-2xl p-4 text-white">
-      </div>
+<!-- HEALTH -->
+<div class="glass p-6 rounded-3xl">
+  <h2 class="text-2xl font-bold mb-4">Health Score</h2>
+  <div class="text-5xl font-bold" id="healthScore">82%</div>
+</div>
 
-      <div>
-        <label class="block mb-2 text-gray-400">Stress Level</label>
-        <select id="stress"
-          class="w-full bg-black/40 border border-cyan-500/20 rounded-2xl p-4 text-white">
-          <option>Low</option>
-          <option selected>Moderate</option>
-          <option>High</option>
-        </select>
-      </div>
+<!-- CHART -->
+<div class="glass p-6 rounded-3xl lg:col-span-2">
+  <canvas id="healthChart"></canvas>
+</div>
 
-      <div>
-        <label class="block mb-2 text-gray-400">Daily Steps</label>
-        <input id="steps" type="number" value="6500"
-          class="w-full bg-black/40 border border-cyan-500/20 rounded-2xl p-4 text-white">
-      </div>
+</div>
 
-    </div>
+<!-- FOOD -->
+<div class="glass p-6 rounded-3xl mt-6">
+  <h2 class="text-2xl font-bold mb-4">Food Tracker</h2>
 
-    <button onclick="updateDashboard()"
-      class="mt-8 px-7 py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 transition-all font-semibold text-black">
-      Update Dashboard
-    </button>
-
+  <div class="flex gap-3">
+    <input id="foodName" class="bg-black/40 p-3 rounded-xl flex-1" placeholder="Food">
+    <input id="foodCalories" type="number" class="bg-black/40 p-3 rounded-xl w-32" placeholder="Cal">
+    <button onclick="addFood()" class="bg-cyan-500 text-black px-4 rounded-xl">Add</button>
   </div>
 
-  <!-- MAIN GRID -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+  <div id="foodList" class="mt-4 space-y-2"></div>
+</div>
 
-    <!-- HEALTH TWIN -->
-    <div class="glass rounded-[30px] p-7">
-
-      <div class="flex justify-between items-center mb-5">
-        <h2 class="text-3xl font-bold">Health Twin</h2>
-        <span class="text-cyan-400">LIVE</span>
-      </div>
-
-      <div class="flex flex-col items-center py-6">
-
-        <div class="w-52 h-52 rounded-full bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center text-8xl pulse glow">
-          🧍
-        </div>
-
-        <h3 id="healthScore" class="text-5xl font-bold mt-8">82%</h3>
-        <p class="text-gray-400 mt-2">Overall Health Score</p>
-
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 mt-6">
-
-        <div class="bg-black/40 rounded-2xl p-4 border border-cyan-500/10">
-          <p class="text-gray-400 text-sm">Energy</p>
-          <h4 id="energyStatus" class="text-2xl font-bold text-green-400 mt-2">High</h4>
-        </div>
-
-        <div class="bg-black/40 rounded-2xl p-4 border border-cyan-500/10">
-          <p class="text-gray-400 text-sm">Recovery</p>
-          <h4 id="recoveryStatus" class="text-2xl font-bold text-cyan-400 mt-2">Good</h4>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- DASHBOARD -->
-    <div class="lg:col-span-2 glass rounded-[30px] p-7">
-
-      <div class="flex justify-between items-center mb-8">
-        <div>
-          <h2 class="text-3xl font-bold">Today's Dashboard</h2>
-          <p class="text-gray-400 mt-2">Real-time wellness intelligence powered by AI.</p>
-        </div>
-
-        <div class="px-5 py-3 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm">
-          Predictive AI Active
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-
-        <div class="bg-black/40 rounded-3xl p-5 border border-white/5">
-          <div class="text-4xl mb-5">🌙</div>
-          <h3 id="sleepDisplay" class="text-3xl font-bold">7h</h3>
-          <p class="text-gray-400 mt-2">Sleep</p>
-        </div>
-
-        <div class="bg-black/40 rounded-3xl p-5 border border-white/5">
-          <div class="text-4xl mb-5">💧</div>
-          <h3 id="waterDisplay" class="text-3xl font-bold">1.5L</h3>
-          <p class="text-gray-400 mt-2">Hydration</p>
-        </div>
-
-        <div class="bg-black/40 rounded-3xl p-5 border border-white/5">
-          <div class="text-4xl mb-5">🧠</div>
-          <h3 id="stressDisplay" class="text-3xl font-bold">Moderate</h3>
-          <p class="text-gray-400 mt-2">Stress</p>
-        </div>
-
-        <div class="bg-black/40 rounded-3xl p-5 border border-white/5">
-          <div class="text-4xl mb-5">👣</div>
-          <h3 id="stepsDisplay" class="text-3xl font-bold">6500</h3>
-          <p class="text-gray-400 mt-2">Steps</p>
-        </div>
-
-      </div>
-
-      <!-- BURNOUT -->
-      <div class="mt-10 bg-black/40 rounded-[30px] p-6 border border-white/5">
-
-        <div class="flex justify-between items-center mb-5">
-          <h3 class="text-2xl font-bold">Burnout Prediction</h3>
-          <span id="burnoutRisk" class="text-yellow-400">Moderate Risk</span>
-        </div>
-
-        <div class="h-56 flex items-end gap-4">
-          <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[45%]"></div>
-          <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[60%]"></div>
-          <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[72%]"></div>
-          <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[85%]"></div>
-          <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[65%]"></div>
-          <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[90%]"></div>
-          <div class="flex-1 rounded-t-3xl bg-gradient-to-t from-cyan-700 to-cyan-400 h-[55%]"></div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- AI INSIGHTS -->
-  <div class="glass rounded-[30px] p-7 mb-8">
-
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold">AI Insights</h2>
-      <span class="text-cyan-400">Smart Recommendations</span>
-    </div>
-
-    <div id="insightContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-      <div class="bg-black/40 rounded-2xl p-5 border border-white/5">
-        Sleep quality is stable today.
-      </div>
-
-      <div class="bg-black/40 rounded-2xl p-5 border border-white/5">
-        Hydration levels are improving.
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- WELLNESS XP -->
-  <div class="glass rounded-[30px] p-7 mb-8">
-
-    <div class="flex justify-between items-center mb-7">
-      <h2 class="text-3xl font-bold">Wellness XP</h2>
-      <span id="levelDisplay" class="text-cyan-400">Level 14</span>
-    </div>
-
-    <div class="w-full h-5 rounded-full bg-black/50 overflow-hidden mb-8">
-      <div id="xpBar" class="h-full w-[68%] bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
-    </div>
-
-    <p class="text-gray-400">
-      Complete healthy habits to level up your AI Health Twin.
-    </p>
-
-  </div>
-
-  <!-- EXTRA FEATURES -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-
-    <div class="glass rounded-[30px] p-7 text-center">
-      <div class="text-6xl mb-4">🔥</div>
-      <h3 id="streakDisplay" class="text-3xl font-bold">1 Day Streak</h3>
-      <p class="text-gray-400 mt-3">Maintain healthy routines daily.</p>
-    </div>
-
-    <div class="glass rounded-[30px] p-7 text-center">
-      <div class="text-6xl mb-4">🍎</div>
-      <h3 class="text-3xl font-bold">Food Tracker</h3>
-      <input type="text" placeholder="Enter meal"
-      class="mt-5 w-full bg-black/40 border border-cyan-500/20 rounded-2xl p-4 text-white">
-    </div>
-
-    <div class="glass rounded-[30px] p-7 text-center">
-      <div class="text-6xl mb-4">💾</div>
-      <h3 class="text-3xl font-bold">Save Progress</h3>
-      <button onclick="saveData()"
-      class="mt-5 px-6 py-3 rounded-2xl bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition-all">
-      Save Data
-      </button>
-    </div>
-
-  </div>
-
-  <!-- FOOTER -->
-  <div class="text-center py-14">
-
-    <h2 class="text-4xl font-bold gradient-text">
-      The Future of Health Intelligence
-    </h2>
-
-    <p class="text-gray-500 mt-4 text-lg max-w-2xl mx-auto">
-      VitaSync AI combines predictive analytics, wellness tracking, productivity intelligence, and human-centered healthcare into one ecosystem.
-    </p>
-
-  </div>
+<!-- JOURNAL -->
+<div class="glass p-6 rounded-3xl mt-6">
+  <h2 class="text-2xl font-bold mb-4">Mood Journal</h2>
+  <textarea id="journal" class="w-full bg-black/40 p-4 rounded-xl" rows="4"></textarea>
+  <button onclick="saveJournal()" class="mt-3 bg-cyan-500 text-black px-4 py-2 rounded-xl">Save</button>
+</div>
 
 </div>
 
 <script>
 
 function updateDashboard() {
-
-  const sleep = parseFloat(document.getElementById('sleep').value);
-  const water = parseFloat(document.getElementById('water').value);
-  const stress = document.getElementById('stress').value;
-  const steps = parseInt(document.getElementById('steps').value);
-
-  document.getElementById('sleepDisplay').innerText = sleep + 'h';
-  document.getElementById('waterDisplay').innerText = water + 'L';
-  document.getElementById('stressDisplay').innerText = stress;
-  document.getElementById('stepsDisplay').innerText = steps;
+  let sleep = +document.getElementById('sleep').value;
+  let water = +document.getElementById('water').value;
+  let stress = document.getElementById('stress').value;
+  let steps = +document.getElementById('steps').value;
 
   let score = 50;
-
   if (sleep >= 7) score += 15;
   if (water >= 2) score += 10;
-  if (steps >= 8000) score += 15;
+  if (steps > 6000) score += 15;
+  if (stress === "Low") score += 10;
 
-  if (stress === 'Low') score += 10;
-  if (stress === 'Moderate') score += 5;
-
-  if (score > 100) score = 100;
-
-  document.getElementById('healthScore').innerText = score + '%';
-
-  if (score >= 80) {
-    document.getElementById('energyStatus').innerText = 'High';
-    document.getElementById('recoveryStatus').innerText = 'Excellent';
-  }
-  else if (score >= 60) {
-    document.getElementById('energyStatus').innerText = 'Moderate';
-    document.getElementById('recoveryStatus').innerText = 'Good';
-  }
-  else {
-    document.getElementById('energyStatus').innerText = 'Low';
-    document.getElementById('recoveryStatus').innerText = 'Needs Rest';
-  }
-
-  const xp = Math.min(score, 100);
-  document.getElementById('xpBar').style.width = xp + '%';
-
-  const level = Math.floor(score / 7);
-  document.getElementById('levelDisplay').innerText = 'Level ' + level;
-
-  if (stress === 'High' || sleep < 6) {
-    document.getElementById('burnoutRisk').innerText = 'High Risk';
-  }
-  else if (stress === 'Moderate') {
-    document.getElementById('burnoutRisk').innerText = 'Moderate Risk';
-  }
-  else {
-    document.getElementById('burnoutRisk').innerText = 'Low Risk';
-  }
-
-  generateInsights();
+  document.getElementById('healthScore').innerText = score + "%";
+  chart.data.datasets[0].data.push(score);
+  chart.update();
 }
 
-function generateInsights() {
+function addFood() {
+  let name = document.getElementById('foodName').value;
+  let cal = document.getElementById('foodCalories').value;
 
-  const sleep = parseFloat(document.getElementById('sleep').value);
-  const water = parseFloat(document.getElementById('water').value);
-  const stress = document.getElementById('stress').value;
-  const steps = parseInt(document.getElementById('steps').value);
+  let div = document.createElement('div');
+  div.className = "bg-black/40 p-3 rounded-xl";
+  div.innerText = `${name} - ${cal} kcal`;
 
-  let insights = [];
-
-  if (sleep < 6) {
-    insights.push('AI detected insufficient sleep. Burnout probability may increase tomorrow.');
-  } else {
-    insights.push('Sleep recovery levels are healthy today.');
-  }
-
-  if (water < 2) {
-    insights.push('Hydration is below recommended levels.');
-  } else {
-    insights.push('Hydration quality is improving this week.');
-  }
-
-  if (stress === 'High') {
-    insights.push('High stress detected. Meditation or rest is recommended.');
-  }
-
-  if (steps < 5000) {
-    insights.push('Physical activity is lower than optimal today.');
-  } else {
-    insights.push('Daily movement goals are progressing well.');
-  }
-
-  const container = document.getElementById('insightContainer');
-
-  container.innerHTML = '';
-
-  insights.forEach(text => {
-    container.innerHTML += `
-      <div class="bg-black/40 rounded-2xl p-5 border border-white/5">
-        ${text}
-      </div>
-    `;
-  });
+  document.getElementById('foodList').appendChild(div);
 }
+
+function saveJournal() {
+  localStorage.setItem("journal", document.getElementById("journal").value);
+  alert("Saved!");
+}
+
+function openChat() {
+  document.getElementById("chatModal").style.display = "flex";
+}
+
+function closeChat() {
+  document.getElementById("chatModal").style.display = "none";
+}
+
+function sendChat() {
+  alert("AI: Improve sleep and hydration.");
+}
+
+// CHART
+const ctx = document.getElementById('healthChart');
+
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets: [{
+      label: 'Health Score',
+      data: [70,75,72,80,82,78,85],
+      borderColor: '#22d3ee'
+    }]
+  }
+});
 
 </script>
 
 </body>
 </html>
-
