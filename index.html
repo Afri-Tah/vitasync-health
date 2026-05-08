@@ -1,8 +1,4 @@
-# VitaSync AI — Interactive Single-File Web App
 
-Save the following as `index.html` and upload it to GitHub Pages, Netlify, or Vercel.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +6,68 @@ Save the following as `index.html` and upload it to GitHub Pages, Netlify, or Ve
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VitaSync AI — Personal Health Intelligence</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com">
+
+// SAVE USER DATA
+function saveData() {
+  const data = {
+    sleep: document.getElementById('sleep').value,
+    water: document.getElementById('water').value,
+    stress: document.getElementById('stress').value,
+    steps: document.getElementById('steps').value
+  };
+
+  localStorage.setItem('vitaSyncData', JSON.stringify(data));
+
+  alert('Health data saved successfully.');
+}
+
+// LOAD USER DATA
+function loadData() {
+  const saved = JSON.parse(localStorage.getItem('vitaSyncData'));
+
+  if(saved) {
+    document.getElementById('sleep').value = saved.sleep;
+    document.getElementById('water').value = saved.water;
+    document.getElementById('stress').value = saved.stress;
+    document.getElementById('steps').value = saved.steps;
+
+    updateDashboard();
+  }
+}
+
+window.onload = loadData;
+
+// DARK/LIGHT MODE
+function toggleTheme() {
+  document.body.classList.toggle('bg-white');
+  document.body.classList.toggle('text-black');
+}
+
+// DAILY STREAK
+let streak = localStorage.getItem('vitaStreak') || 1;
+document.addEventListener('DOMContentLoaded', () => {
+  const streakElement = document.getElementById('streakDisplay');
+  if(streakElement) {
+    streakElement.innerText = streak + ' Day Streak';
+  }
+});
+
+// WATER REMINDER
+setInterval(() => {
+  console.log('Hydration Reminder Triggered');
+}, 60000);
+
+// SIMULATED AI CHAT
+function openAssistant() {
+  const response = prompt('Ask VitaSync AI anything about your health:');
+
+  if(response) {
+    alert('VitaSync AI suggests improving hydration, sleep consistency, and stress management.');
+  }
+}
+
+</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -93,9 +150,9 @@ Save the following as `index.html` and upload it to GitHub Pages, Netlify, or Ve
       </p>
     </div>
 
-    <button onclick="generateInsights()"
+    <button onclick="openAssistant()"
       class="px-7 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all duration-300 font-semibold glow">
-      Generate AI Insights
+      Launch AI Assistant
     </button>
 
   </div>
@@ -291,6 +348,33 @@ Save the following as `index.html` and upload it to GitHub Pages, Netlify, or Ve
 
   </div>
 
+  <!-- EXTRA FEATURES -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+    <div class="glass rounded-[30px] p-7 text-center">
+      <div class="text-6xl mb-4">🔥</div>
+      <h3 id="streakDisplay" class="text-3xl font-bold">1 Day Streak</h3>
+      <p class="text-gray-400 mt-3">Maintain healthy routines daily.</p>
+    </div>
+
+    <div class="glass rounded-[30px] p-7 text-center">
+      <div class="text-6xl mb-4">🍎</div>
+      <h3 class="text-3xl font-bold">Food Tracker</h3>
+      <input type="text" placeholder="Enter meal"
+      class="mt-5 w-full bg-black/40 border border-cyan-500/20 rounded-2xl p-4 text-white">
+    </div>
+
+    <div class="glass rounded-[30px] p-7 text-center">
+      <div class="text-6xl mb-4">💾</div>
+      <h3 class="text-3xl font-bold">Save Progress</h3>
+      <button onclick="saveData()"
+      class="mt-5 px-6 py-3 rounded-2xl bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition-all">
+      Save Data
+      </button>
+    </div>
+
+  </div>
+
   <!-- FOOTER -->
   <div class="text-center py-14">
 
@@ -413,47 +497,4 @@ function generateInsights() {
 
 </body>
 </html>
-```
 
-## Advanced Interactive Features Added
-
-The app is now designed to support a much more app-like interactive experience.
-
-### Added Interactivity Ideas Included In Code Structure
-
-* Live health score calculation
-* Dynamic burnout prediction
-* AI-generated recommendations
-* Wellness XP progression
-* User input forms
-* Real-time dashboard updates
-* Responsive mobile-friendly layout
-* Simulated AI assistant button
-* Dynamic health states
-* Interactive sections ready for expansion
-
-## Recommended Next Upgrades
-
-To turn VitaSync AI into a true startup-grade platform, add:
-
-* Chart.js analytics graphs
-* LocalStorage data saving
-* Multi-page navigation
-* Mood journal
-* Food calorie tracker
-* Authentication system
-* Camera upload support
-* Voice assistant integration
-* Daily streak system
-* Notifications/reminders
-* Wearable sync simulation
-* User profile settings
-* Dark/light themes
-* AI chatbot modal
-
-## Deployment
-
-1. Save as `index.html`
-2. Upload to GitHub repository
-3. Enable GitHub Pages
-4. Open the live deployment URL
