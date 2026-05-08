@@ -1,1256 +1,247 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AuraOS — Your Health Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #050810;
-    --bg2: #080d1a;
-    --surface: #0d1526;
-    --surface2: #111d32;
-    --border: rgba(80,140,255,0.12);
-    --border2: rgba(80,140,255,0.22);
-    --accent: #3d7fff;
-    --accent2: #7b4fff;
-    --accent3: #00e5c3;
-    --accent4: #ff6b8a;
-    --accent5: #ffb347;
-    --text: #e8edf8;
-    --text2: #8a9bbf;
-    --text3: #4a5875;
-    --glow: rgba(61,127,255,0.18);
-    --glow2: rgba(123,79,255,0.14);
-    --glow3: rgba(0,229,195,0.14);
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+export default function VitaSyncAI() {
+  const vitals = [
+    { label: 'Heart Rate', value: '72 bpm', icon: '❤️' },
+    { label: 'Sleep', value: '7h 12m', icon: '🌙' },
+    { label: 'Hydration', value: '1.4L', icon: '💧' },
+    { label: 'Stress', value: 'Moderate', icon: '🧠' },
+  ];
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  const insights = [
+    'AI predicts burnout risk may increase if sleep drops below 6 hours.',
+    'Your productivity is highest between 9 AM and 1 PM.',
+    'Hydration levels are improving this week.',
+    'Vitamin D may be lower than optimal based on recent symptoms.',
+  ];
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg2); }
-  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+  const missions = [
+    { title: 'Drink 2L Water', progress: 70 },
+    { title: 'Sleep Before 11PM', progress: 40 },
+    { title: 'Walk 10,000 Steps', progress: 90 },
+    { title: 'Meditate 10 Minutes', progress: 100 },
+  ];
 
-  /* NOISE OVERLAY */
-  body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-  }
+  return (
+    <div className="min-h-screen bg-black text-white p-6 font-sans">
+      <div className="max-w-7xl mx-auto">
 
-  /* LAYOUT */
-  .app-shell {
-    display: grid;
-    grid-template-columns: 72px 1fr;
-    grid-template-rows: 1fr;
-    min-height: 100vh;
-    position: relative; z-index: 1;
-  }
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <p className="text-sm text-gray-400">AI-Powered Personal Health Intelligence</p>
+            <h1 className="text-5xl font-bold mt-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              VitaSync AI
+            </h1>
+          </div>
 
-  /* SIDEBAR */
-  .sidebar {
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-    gap: 6px;
-    position: sticky;
-    top: 0; height: 100vh;
-    z-index: 100;
-  }
-  .sidebar-logo {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: 14px; color: #fff;
-    margin-bottom: 16px;
-    box-shadow: 0 0 20px rgba(61,127,255,0.4);
-    position: relative;
-    cursor: pointer;
-  }
-  .sidebar-logo::after {
-    content: '';
-    position: absolute; inset: -4px;
-    border-radius: 16px;
-    border: 1px solid rgba(61,127,255,0.3);
-    animation: pulse-ring 2.5s ease-in-out infinite;
-  }
-  @keyframes pulse-ring {
-    0%,100% { opacity:0.6; transform: scale(1); }
-    50% { opacity:0.2; transform: scale(1.08); }
-  }
-  .nav-item {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    color: var(--text3);
-    font-size: 18px;
-  }
-  .nav-item:hover { background: var(--surface); color: var(--text); }
-  .nav-item.active {
-    background: rgba(61,127,255,0.15);
-    color: var(--accent);
-    box-shadow: inset 0 0 0 1px rgba(61,127,255,0.25);
-  }
-  .nav-item.active::before {
-    content: '';
-    position: absolute;
-    left: -1px; top: 50%; transform: translateY(-50%);
-    width: 3px; height: 22px;
-    background: var(--accent);
-    border-radius: 0 2px 2px 0;
-  }
-  .nav-spacer { flex: 1; }
-  .nav-avatar {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent3), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 13px;
-    cursor: pointer;
-    box-shadow: 0 0 12px rgba(0,229,195,0.3);
-  }
-
-  /* MAIN CONTENT */
-  .main {
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* TOP BAR */
-  .topbar {
-    padding: 18px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(5,8,16,0.8);
-    backdrop-filter: blur(12px);
-    position: sticky; top: 0; z-index: 50;
-  }
-  .topbar-greeting {
-    flex: 1;
-  }
-  .topbar-greeting .date {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px; color: var(--text3);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .topbar-greeting h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 18px;
-    color: var(--text);
-    margin-top: 1px;
-  }
-  .topbar-greeting h1 span { color: var(--accent3); }
-  .topbar-actions { display: flex; align-items: center; gap: 10px; }
-  .chip {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 12px;
-    border-radius: 100px;
-    border: 1px solid var(--border2);
-    background: var(--surface);
-    font-size: 12px; color: var(--text2);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .chip:hover { border-color: var(--accent); color: var(--accent); }
-  .chip .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent3);
-    box-shadow: 0 0 6px var(--accent3);
-    animation: blink 1.8s ease-in-out infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  /* CONTENT GRID */
-  .content {
-    padding: 24px 28px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    gap: 18px;
-  }
-
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 22px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  .card:hover {
-    border-color: var(--border2);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  }
-  .card-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 14px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .card-label .icon { font-size: 12px; }
-
-  /* HEALTH TWIN CARD */
-  .twin-card {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(160deg, #0d1a2e, #0a1020);
-    border-color: rgba(61,127,255,0.2);
-  }
-  .twin-card::before {
-    content: '';
-    position: absolute;
-    top: -60px; left: 50%; transform: translateX(-50%);
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(61,127,255,0.12), transparent 70%);
-    pointer-events: none;
-  }
-
-  .twin-figure {
-    position: relative;
-    width: 130px; height: 200px;
-    margin: 10px 0 18px;
-  }
-  .twin-body {
-    position: relative;
-    width: 100%; height: 100%;
-  }
-  /* Human figure SVG-like CSS art */
-  .body-head {
-    width: 46px; height: 46px;
-    background: radial-gradient(circle at 40% 38%, #7ec8e3, #3a7fff);
-    border-radius: 50%;
-    position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    box-shadow: 0 0 20px rgba(61,127,255,0.5), 0 0 40px rgba(61,127,255,0.2);
-    animation: float 4s ease-in-out infinite;
-  }
-  .body-head::after {
-    content: '';
-    position: absolute; inset: -4px;
-    border-radius: 50%;
-    border: 1px solid rgba(100,180,255,0.3);
-    animation: pulse-ring 3s ease-in-out infinite;
-  }
-  .body-torso {
-    width: 52px; height: 72px;
-    background: linear-gradient(180deg, rgba(61,127,255,0.5), rgba(123,79,255,0.4));
-    border-radius: 16px 16px 12px 12px;
-    position: absolute;
-    top: 52px; left: 50%; transform: translateX(-50%);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 0 24px rgba(100,100,255,0.25);
-  }
-  .body-torso::before {
-    content: '';
-    position: absolute;
-    top: 12px; left: 50%; transform: translateX(-50%);
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,100,140,0.6), rgba(255,80,120,0.2));
-    box-shadow: 0 0 12px rgba(255,100,140,0.6);
-    animation: heartbeat 1.4s ease-in-out infinite;
-  }
-  @keyframes heartbeat {
-    0%,100%{transform:translateX(-50%) scale(1)} 
-    14%{transform:translateX(-50%) scale(1.25)} 
-    28%{transform:translateX(-50%) scale(1)} 
-    42%{transform:translateX(-50%) scale(1.15)}
-    56%{transform:translateX(-50%) scale(1)}
-  }
-  .body-arm {
-    width: 16px; height: 60px;
-    background: linear-gradient(180deg, rgba(61,127,255,0.4), rgba(61,127,255,0.15));
-    border-radius: 8px;
-    position: absolute;
-    top: 55px;
-  }
-  .body-arm.left { left: 8px; transform: rotate(-8deg); }
-  .body-arm.right { right: 8px; transform: rotate(8deg); }
-  .body-leg {
-    width: 20px; height: 66px;
-    background: linear-gradient(180deg, rgba(61,127,255,0.4), rgba(61,127,255,0.1));
-    border-radius: 8px 8px 10px 10px;
-    position: absolute;
-    top: 128px;
-  }
-  .body-leg.left { left: 22px; }
-  .body-leg.right { right: 22px; }
-
-  /* Aura rings */
-  .aura-ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    animation: aura-expand 3s ease-out infinite;
-  }
-  .aura-ring:nth-child(1) { width: 160px; height: 220px; border-color: rgba(61,127,255,0.15); animation-delay: 0s; }
-  .aura-ring:nth-child(2) { width: 190px; height: 260px; border-color: rgba(123,79,255,0.1); animation-delay: 1s; }
-  .aura-ring:nth-child(3) { width: 220px; height: 300px; border-color: rgba(0,229,195,0.07); animation-delay: 2s; }
-  @keyframes aura-expand {
-    0% { opacity: 0.8; transform: translate(-50%,-50%) scale(0.95); }
-    100% { opacity: 0; transform: translate(-50%,-50%) scale(1.08); }
-  }
-  @keyframes float {
-    0%,100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(-4px); }
-  }
-
-  .twin-status-tags {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    justify-content: center;
-    margin-top: 4px;
-  }
-  .status-tag {
-    padding: 4px 10px;
-    border-radius: 100px;
-    font-size: 11px; font-weight: 500;
-    display: flex; align-items: center; gap: 4px;
-  }
-  .tag-blue { background: rgba(61,127,255,0.15); color: #7eb8ff; border: 1px solid rgba(61,127,255,0.2); }
-  .tag-green { background: rgba(0,229,195,0.12); color: #00e5c3; border: 1px solid rgba(0,229,195,0.2); }
-  .tag-yellow { background: rgba(255,179,71,0.12); color: #ffb347; border: 1px solid rgba(255,179,71,0.2); }
-  .tag-pink { background: rgba(255,107,138,0.12); color: #ff6b8a; border: 1px solid rgba(255,107,138,0.2); }
-
-  .twin-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px; font-weight: 700;
-    color: var(--text); margin-top: 14px;
-  }
-  .twin-score-row {
-    display: flex; align-items: center; gap: 8px;
-    margin-top: 6px;
-  }
-  .health-score-big {
-    font-family: 'Syne', sans-serif;
-    font-size: 42px; font-weight: 800;
-    background: linear-gradient(135deg, var(--accent3), var(--accent));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    line-height: 1;
-  }
-  .health-score-label {
-    font-size: 11px; color: var(--text3);
-    line-height: 1.4;
-  }
-
-  /* SCORE ARC */
-  .score-arc-wrap {
-    position: relative;
-    width: 100%; margin-top: 16px;
-  }
-  .arc-svg { width: 100%; height: 60px; }
-
-  /* VITAL STATS CARD */
-  .vitals-card { grid-column: 2; grid-row: 1; }
-  .vitals-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 6px;
-  }
-  .vital-item {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.25s;
-    cursor: default;
-  }
-  .vital-item:hover { border-color: var(--border2); transform: translateY(-1px); }
-  .vital-item::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 2px;
-    border-radius: 2px 2px 0 0;
-  }
-  .vi-blue::before { background: linear-gradient(90deg, var(--accent), transparent); }
-  .vi-green::before { background: linear-gradient(90deg, var(--accent3), transparent); }
-  .vi-pink::before { background: linear-gradient(90deg, var(--accent4), transparent); }
-  .vi-yellow::before { background: linear-gradient(90deg, var(--accent5), transparent); }
-
-  .vital-icon { font-size: 18px; margin-bottom: 6px; }
-  .vital-value {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 22px;
-    color: var(--text);
-    line-height: 1;
-  }
-  .vital-value span { font-size: 12px; color: var(--text3); font-weight: 400; }
-  .vital-label { font-size: 11px; color: var(--text3); margin-top: 3px; }
-  .vital-trend {
-    font-size: 10px;
-    margin-top: 5px;
-    display: flex; align-items: center; gap: 3px;
-  }
-  .trend-up { color: #00e5c3; }
-  .trend-down { color: #ff6b8a; }
-
-  /* SLEEP CARD */
-  .sleep-card { grid-column: 3; grid-row: 1; }
-  .sleep-viz { margin-top: 12px; }
-  .sleep-bar-wrap {
-    display: flex; gap: 2px;
-    height: 50px; align-items: flex-end;
-    margin-bottom: 8px;
-  }
-  .sleep-bar {
-    flex: 1;
-    border-radius: 3px 3px 0 0;
-    transition: all 0.3s;
-    cursor: pointer;
-    position: relative;
-  }
-  .sleep-bar:hover { filter: brightness(1.3); }
-  .sleep-bar.deep { background: linear-gradient(180deg, var(--accent2), rgba(123,79,255,0.4)); }
-  .sleep-bar.light { background: linear-gradient(180deg, var(--accent), rgba(61,127,255,0.4)); }
-  .sleep-bar.rem { background: linear-gradient(180deg, var(--accent3), rgba(0,229,195,0.3)); }
-  .sleep-legend {
-    display: flex; gap: 12px;
-    font-size: 10px; color: var(--text3);
-  }
-  .legend-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    margin-right: 4px;
-    vertical-align: middle;
-  }
-  .sleep-score-row {
-    display: flex; align-items: baseline; gap: 6px;
-    margin-top: 12px;
-  }
-  .sleep-score { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:var(--accent); }
-  .sleep-label { font-size:12px; color:var(--text3); }
-
-  /* BURNOUT CARD */
-  .burnout-card { grid-column: 2; grid-row: 2; }
-  .burnout-gauge {
-    position: relative;
-    width: 100%; padding-top: 8px;
-  }
-  .gauge-svg { width: 100%; height: 90px; }
-  .burnout-status {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px; font-weight: 700;
-    color: var(--accent5);
-    text-align: center;
-    margin-top: -10px;
-  }
-  .burnout-factors {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    margin-top: 14px;
-  }
-  .factor-tag {
-    padding: 4px 9px;
-    border-radius: 6px;
-    font-size: 11px;
-    background: rgba(255,179,71,0.1);
-    color: var(--accent5);
-    border: 1px solid rgba(255,179,71,0.2);
-  }
-
-  /* FOOD CARD */
-  .food-card { grid-column: 3; grid-row: 2; }
-  .macro-rings {
-    display: flex; gap: 14px;
-    align-items: center;
-    margin-top: 10px;
-  }
-  .macro-ring-item { text-align: center; flex: 1; }
-  .ring-svg { width: 60px; height: 60px; }
-  .macro-name { font-size: 10px; color: var(--text3); margin-top: 4px; }
-  .macro-val { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--text); }
-  .food-scan-btn {
-    width: 100%;
-    margin-top: 14px;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px dashed rgba(0,229,195,0.3);
-    background: rgba(0,229,195,0.05);
-    color: var(--accent3);
-    font-family: 'Syne', sans-serif;
-    font-size: 12px; font-weight: 600;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: all 0.2s;
-  }
-  .food-scan-btn:hover {
-    background: rgba(0,229,195,0.1);
-    border-color: var(--accent3);
-  }
-
-  /* AI INSIGHTS CARD */
-  .insights-card { grid-column: 1 / 4; grid-row: 3; }
-  .insights-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-top: 12px;
-  }
-  .insight-item {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    transition: all 0.25s;
-    cursor: default;
-    position: relative;
-    overflow: hidden;
-  }
-  .insight-item:hover { border-color: var(--border2); transform: translateY(-2px); }
-  .insight-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px; letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 3px 7px;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-  .it-predict { background: rgba(123,79,255,0.15); color: var(--accent2); }
-  .it-alert { background: rgba(255,107,138,0.15); color: var(--accent4); }
-  .it-tip { background: rgba(0,229,195,0.12); color: var(--accent3); }
-  .it-info { background: rgba(61,127,255,0.15); color: var(--accent); }
-  .insight-text { font-size: 13px; color: var(--text); line-height: 1.5; }
-  .insight-time { font-size: 10px; color: var(--text3); margin-top: 8px; }
-  .insight-item .ai-badge {
-    position: absolute; top: 12px; right: 12px;
-    width: 22px; height: 22px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px;
-  }
-
-  /* WEEKLY ACTIVITY */
-  .activity-card { grid-column: 1 / 3; grid-row: 4; }
-  .week-grid {
-    display: flex; gap: 10px;
-    margin-top: 14px;
-    align-items: flex-end;
-    height: 80px;
-  }
-  .day-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .day-bar-track {
-    flex: 1; width: 100%;
-    background: var(--bg2);
-    border-radius: 6px;
-    position: relative;
-    overflow: hidden;
-    height: 60px;
-  }
-  .day-bar-fill {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    border-radius: 6px 6px 0 0;
-    transition: height 1s cubic-bezier(.34,1.56,.64,1);
-  }
-  .day-label { font-size: 10px; color: var(--text3); font-family: 'Space Mono', monospace; }
-  .day-col.today .day-label { color: var(--accent); }
-  .day-col.today .day-bar-fill { box-shadow: 0 0 12px rgba(61,127,255,0.4); }
-
-  /* POSTURE CARD */
-  .posture-card { grid-column: 3; grid-row: 4; }
-  .posture-viz {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 12px;
-  }
-  .posture-figure {
-    width: 48px; height: 90px;
-    position: relative;
-    flex-shrink: 0;
-  }
-  .pf-head { width:20px;height:20px;border-radius:50%;background:var(--accent3);position:absolute;top:0;left:50%;transform:translateX(-50%);box-shadow:0 0 10px rgba(0,229,195,0.5); }
-  .pf-spine {
-    width: 4px; height: 44px;
-    position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-    border-radius: 2px;
-    background: linear-gradient(180deg, var(--accent3), rgba(0,229,195,0.3));
-  }
-  .pf-hip { width:24px;height:12px;border-radius:6px;background:rgba(0,229,195,0.4);position:absolute;top:62px;left:50%;transform:translateX(-50%); }
-  .posture-details { flex: 1; }
-  .posture-score { font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent3); }
-  .posture-issues { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
-  .posture-issue {
-    font-size: 11px;
-    display: flex; align-items: center; gap: 6px;
-    color: var(--text2);
-  }
-  .issue-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0; }
-
-  /* FAMILY CARD */
-  .family-card { grid-column: 1 / 3; grid-row: 5; }
-  .family-members {
-    display: flex; gap: 12px;
-    margin-top: 14px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .member-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    min-width: 130px;
-    display: flex; flex-direction: column; align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .member-card:hover { border-color: var(--border2); transform: translateY(-2px); }
-  .member-avatar {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    position: relative;
-  }
-  .member-avatar.ok { background: rgba(0,229,195,0.15); box-shadow: 0 0 0 2px rgba(0,229,195,0.3); }
-  .member-avatar.warn { background: rgba(255,179,71,0.15); box-shadow: 0 0 0 2px rgba(255,179,71,0.3); }
-  .member-avatar.alert { background: rgba(255,107,138,0.15); box-shadow: 0 0 0 2px rgba(255,107,138,0.3); }
-  .member-name { font-family:'Syne',sans-serif;font-size:13px;font-weight:600; }
-  .member-status { font-size:11px;color:var(--text3); }
-  .member-badge {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 100px;
-  }
-  .badge-ok { background:rgba(0,229,195,0.12);color:var(--accent3); }
-  .badge-warn { background:rgba(255,179,71,0.12);color:var(--accent5); }
-  .badge-alert { background:rgba(255,107,138,0.12);color:var(--accent4); }
-
-  /* MEDICAL REPORT */
-  .report-card { grid-column: 3; grid-row: 5; }
-  .report-upload {
-    margin-top: 12px;
-    border: 1px dashed rgba(61,127,255,0.25);
-    border-radius: 14px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .report-upload:hover { border-color: var(--accent); background: rgba(61,127,255,0.04); }
-  .report-upload-icon { font-size: 28px; margin-bottom: 8px; }
-  .report-upload-text { font-size: 12px; color: var(--text3); }
-  .report-upload-text strong { color: var(--accent); }
-  .report-results {
-    margin-top: 14px;
-    display: flex; flex-direction: column; gap: 8px;
-  }
-  .report-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 12px;
-    background: var(--bg2);
-    border-radius: 10px;
-    border: 1px solid var(--border);
-  }
-  .report-name { font-size: 12px; color: var(--text2); }
-  .report-value { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; }
-  .rv-normal { color: var(--accent3); }
-  .rv-low { color: var(--accent5); }
-  .rv-high { color: var(--accent4); }
-
-  /* GAMIFICATION */
-  .game-card { grid-column: 1 / 4; grid-row: 6; }
-  .xp-bar-wrap {
-    margin-top: 12px;
-    background: var(--bg2);
-    border-radius: 100px;
-    height: 8px;
-    position: relative;
-    overflow: hidden;
-  }
-  .xp-bar-fill {
-    height: 100%;
-    border-radius: 100px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
-    width: 68%;
-    position: relative;
-  }
-  .xp-bar-fill::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 20px;
-    background: rgba(255,255,255,0.4);
-    filter: blur(4px);
-    animation: xp-glow 1.5s ease-in-out infinite;
-  }
-  @keyframes xp-glow { 0%,100%{opacity:0.8} 50%{opacity:0.3} }
-  .xp-labels {
-    display: flex; justify-content: space-between;
-    font-size: 10px; color: var(--text3);
-    margin-top: 5px;
-    font-family: 'Space Mono', monospace;
-  }
-  .missions-row {
-    display: flex; gap: 10px;
-    margin-top: 14px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .mission {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    min-width: 140px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .mission:hover { border-color: var(--border2); transform: translateY(-2px); }
-  .mission.complete { border-color: rgba(0,229,195,0.3); }
-  .mission.complete::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(0,229,195,0.06), transparent);
-  }
-  .mission-icon { font-size: 22px; margin-bottom: 8px; }
-  .mission-title { font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text); }
-  .mission-xp { font-family:'Space Mono',monospace;font-size:10px;color:var(--text3);margin-top:3px; }
-  .mission-progress {
-    margin-top: 10px;
-    background: var(--surface2);
-    border-radius: 100px;
-    height: 3px;
-    overflow: hidden;
-  }
-  .mission-progress-fill {
-    height: 100%;
-    border-radius: 100px;
-    background: var(--accent3);
-  }
-  .mission.complete .mission-progress-fill { background: var(--accent3); }
-  .check-badge {
-    position: absolute; top: 10px; right: 10px;
-    width: 18px; height: 18px;
-    background: var(--accent3);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: var(--bg);
-  }
-
-  /* VOICE AI FLOATING BUTTON */
-  .voice-fab {
-    position: fixed;
-    bottom: 28px; right: 28px;
-    width: 58px; height: 58px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(61,127,255,0.4);
-    z-index: 200;
-    transition: transform 0.2s;
-    font-size: 22px;
-  }
-  .voice-fab:hover { transform: scale(1.08); }
-  .voice-fab::after {
-    content: '';
-    position: absolute; inset: -6px;
-    border-radius: 50%;
-    border: 1px solid rgba(61,127,255,0.3);
-    animation: pulse-ring 2s ease-in-out infinite;
-  }
-
-  /* EMERGENCY QR */
-  .emergency-card {
-    position: fixed;
-    bottom: 28px; left: 100px;
-    background: var(--surface);
-    border: 1px solid rgba(255,107,138,0.3);
-    border-radius: 16px;
-    padding: 14px 16px;
-    display: flex; align-items: center; gap: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    z-index: 200;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  }
-  .emergency-card:hover { border-color: var(--accent4); box-shadow: 0 8px 28px rgba(255,107,138,0.15); }
-  .qr-placeholder {
-    width: 36px; height: 36px;
-    background: var(--text);
-    border-radius: 4px;
-    display: grid; grid-template-columns:1fr 1fr 1fr; gap:2px; padding:3px;
-  }
-  .qr-cell { background: var(--bg); border-radius: 1px; }
-  .qr-cell:nth-child(1),.qr-cell:nth-child(3),.qr-cell:nth-child(7),.qr-cell:nth-child(9) { background: var(--bg2); }
-  .emergency-text { font-size:11px; }
-  .emergency-text strong { display:block;color:var(--accent4);font-family:'Syne',sans-serif;font-size:12px;font-weight:700; }
-  .emergency-text span { color:var(--text3); }
-
-  /* TOOLTIPS and animations */
-  .card { animation: card-in 0.5s ease both; }
-  .card:nth-child(1){animation-delay:0.05s}
-  .card:nth-child(2){animation-delay:0.1s}
-  .card:nth-child(3){animation-delay:0.15s}
-  .card:nth-child(4){animation-delay:0.2s}
-  .card:nth-child(5){animation-delay:0.25s}
-  .card:nth-child(6){animation-delay:0.3s}
-  @keyframes card-in {
-    from { opacity:0; transform: translateY(16px); }
-    to { opacity:1; transform: translateY(0); }
-  }
-
-  /* RESPONSIVE tweaks */
-  @media (max-width: 900px) {
-    .content { grid-template-columns: 1fr 1fr; }
-    .twin-card { grid-column: 1 / 3; grid-row: auto; flex-direction: row; }
-    .insights-card,.activity-card,.family-card,.game-card { grid-column: 1 / 3; }
-  }
-</style>
-</head>
-<body>
-<div class="app-shell">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">A</div>
-    <div class="nav-item active" title="Dashboard">⬡</div>
-    <div class="nav-item" title="Health Twin">◈</div>
-    <div class="nav-item" title="Food Scanner">⊙</div>
-    <div class="nav-item" title="Activity">◉</div>
-    <div class="nav-item" title="Women's Health">♀</div>
-    <div class="nav-item" title="Family">⌂</div>
-    <div class="nav-item" title="Reports">⊞</div>
-    <div class="nav-spacer"></div>
-    <div class="nav-item" title="Settings">⚙</div>
-    <div class="nav-avatar">AF</div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-greeting">
-        <div class="date" id="dateStr">Friday · May 08 · 2026</div>
-        <h1>Good morning, <span>Afrida</span> 👋</h1>
-      </div>
-      <div class="topbar-actions">
-        <div class="chip">
-          <span class="dot"></span>
-          Live Sync
+          <button className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold shadow-lg hover:scale-105 transition">
+            Launch Voice Assistant
+          </button>
         </div>
-        <div class="chip">🔔 3 Alerts</div>
-        <div class="chip">+ Log Entry</div>
-      </div>
-    </header>
 
-    <!-- GRID -->
-    <div class="content">
+        {/* HERO */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
-      <!-- HEALTH TWIN -->
-      <div class="card twin-card">
-        <div class="card-label"><span class="icon">◈</span> Health Twin</div>
-        <div class="twin-figure">
-          <div class="aura-ring"></div>
-          <div class="aura-ring"></div>
-          <div class="aura-ring"></div>
-          <div class="twin-body">
-            <div class="body-arm left"></div>
-            <div class="body-arm right"></div>
-            <div class="body-head"></div>
-            <div class="body-torso"></div>
-            <div class="body-leg left"></div>
-            <div class="body-leg right"></div>
+          {/* HEALTH TWIN */}
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-cyan-500/20 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold">Health Twin</h2>
+              <span className="text-cyan-400">Live</span>
+            </div>
+
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="w-44 h-44 rounded-full bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center text-6xl shadow-[0_0_60px_rgba(34,211,238,0.4)] animate-pulse">
+                🧍
+              </div>
+
+              <div className="mt-6 text-center">
+                <h3 className="text-3xl font-bold">82%</h3>
+                <p className="text-gray-400 mt-1">Overall Health Score</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mt-6">
+              <div className="bg-black/40 rounded-2xl p-3 border border-zinc-800">
+                <p className="text-gray-400 text-sm">Energy</p>
+                <h4 className="text-xl font-bold text-green-400">High</h4>
+              </div>
+
+              <div className="bg-black/40 rounded-2xl p-3 border border-zinc-800">
+                <p className="text-gray-400 text-sm">Recovery</p>
+                <h4 className="text-xl font-bold text-cyan-400">Good</h4>
+              </div>
+            </div>
+          </div>
+
+          {/* VITALS */}
+          <div className="lg:col-span-2 bg-zinc-900 rounded-3xl p-6 border border-zinc-800 shadow-xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Today's Health Dashboard</h2>
+              <div className="px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm">
+                Predictive AI Active
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              {vitals.map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-black/40 rounded-2xl p-5 border border-zinc-800 hover:border-cyan-500/40 transition"
+                >
+                  <div className="text-3xl mb-4">{item.icon}</div>
+                  <h3 className="text-2xl font-bold">{item.value}</h3>
+                  <p className="text-gray-400 mt-1">{item.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* AI GRAPH MOCKUP */}
+            <div className="mt-8 bg-black/40 rounded-3xl p-6 border border-zinc-800">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Burnout Prediction</h3>
+                <span className="text-yellow-400">Moderate Risk</span>
+              </div>
+
+              <div className="h-44 flex items-end gap-3">
+                {[40, 55, 60, 72, 65, 80, 58].map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-t-2xl bg-gradient-to-t from-cyan-600 to-blue-400"
+                    style={{ height: `${h}%` }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-        <div class="twin-name">Afrida — Digital Avatar</div>
-        <div class="twin-score-row">
-          <div class="health-score-big">82</div>
-          <div class="health-score-label">Health<br>Score</div>
-        </div>
-        <div class="score-arc-wrap">
-          <svg class="arc-svg" viewBox="0 0 200 60">
-            <defs>
-              <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="#ff6b8a"/>
-                <stop offset="40%" stop-color="#ffb347"/>
-                <stop offset="70%" stop-color="#3d7fff"/>
-                <stop offset="100%" stop-color="#00e5c3"/>
-              </linearGradient>
-            </defs>
-            <path d="M 10 55 A 90 90 0 0 1 190 55" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="6" stroke-linecap="round"/>
-            <path d="M 10 55 A 90 90 0 0 1 190 55" fill="none" stroke="url(#arcGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="60"/>
-            <circle cx="157" cy="23" r="6" fill="#3d7fff" filter="url(#glow)"/>
-          </svg>
-        </div>
-        <div class="twin-status-tags">
-          <div class="status-tag tag-blue">😴 7.2h Sleep</div>
-          <div class="status-tag tag-green">💧 Hydrated</div>
-          <div class="status-tag tag-yellow">⚡ Mild Stress</div>
-          <div class="status-tag tag-pink">❤️ HR 72bpm</div>
-        </div>
-      </div>
 
-      <!-- VITALS -->
-      <div class="card vitals-card">
-        <div class="card-label"><span class="icon">💓</span> Today's Vitals</div>
-        <div class="vitals-grid">
-          <div class="vital-item vi-pink">
-            <div class="vital-icon">❤️</div>
-            <div class="vital-value">72 <span>bpm</span></div>
-            <div class="vital-label">Heart Rate</div>
-            <div class="vital-trend trend-up">↑ +3 resting</div>
-          </div>
-          <div class="vital-item vi-blue">
-            <div class="vital-icon">🩺</div>
-            <div class="vital-value">118<span>/76</span></div>
-            <div class="vital-label">Blood Pressure</div>
-            <div class="vital-trend trend-up">✓ Optimal</div>
-          </div>
-          <div class="vital-item vi-green">
-            <div class="vital-icon">💧</div>
-            <div class="vital-value">1.4 <span>L</span></div>
-            <div class="vital-label">Hydration</div>
-            <div class="vital-trend trend-down">↓ 600ml left</div>
-          </div>
-          <div class="vital-item vi-yellow">
-            <div class="vital-icon">🔥</div>
-            <div class="vital-value">1,240<span> kcal</span></div>
-            <div class="vital-label">Calories Out</div>
-            <div class="vital-trend trend-up">↑ On track</div>
-          </div>
-        </div>
-      </div>
+        {/* FEATURES */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
-      <!-- SLEEP -->
-      <div class="card sleep-card">
-        <div class="card-label"><span class="icon">🌙</span> Sleep Analysis</div>
-        <div class="sleep-viz">
-          <div class="sleep-bar-wrap" id="sleepBars"></div>
-          <div class="sleep-legend">
-            <span><span class="legend-dot" style="background:var(--accent2)"></span>Deep</span>
-            <span><span class="legend-dot" style="background:var(--accent)"></span>Light</span>
-            <span><span class="legend-dot" style="background:var(--accent3)"></span>REM</span>
-          </div>
-        </div>
-        <div class="sleep-score-row">
-          <div class="sleep-score">7h 12m</div>
-          <div class="sleep-label">Total Sleep<br><span style="color:var(--accent3)">Quality: Good</span></div>
-        </div>
-      </div>
+          {/* AI INSIGHTS */}
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+            <h2 className="text-2xl font-bold mb-6">Predictive AI Insights</h2>
 
-      <!-- BURNOUT -->
-      <div class="card burnout-card">
-        <div class="card-label"><span class="icon">🧠</span> Burnout Risk</div>
-        <div class="burnout-gauge">
-          <svg class="gauge-svg" viewBox="0 0 200 110">
-            <defs>
-              <linearGradient id="burnGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="#00e5c3"/>
-                <stop offset="50%" stop-color="#ffb347"/>
-                <stop offset="100%" stop-color="#ff6b8a"/>
-              </linearGradient>
-            </defs>
-            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" stroke-linecap="round"/>
-            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#burnGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="100"/>
-            <!-- Needle -->
-            <line x1="100" y1="100" x2="148" y2="40" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-            <circle cx="100" cy="100" r="6" fill="var(--surface2)" stroke="white" stroke-width="2"/>
-            <text x="22" y="115" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Space Mono,monospace">LOW</text>
-            <text x="168" y="115" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Space Mono,monospace">HIGH</text>
-          </svg>
-        </div>
-        <div class="burnout-status">Moderate Risk — 42%</div>
-        <div class="burnout-factors">
-          <div class="factor-tag">Late nights</div>
-          <div class="factor-tag">Screen +9h</div>
-          <div class="factor-tag">Skipped breaks</div>
-        </div>
-      </div>
+            <div className="space-y-4">
+              {insights.map((insight, index) => (
+                <div
+                  key={index}
+                  className="bg-black/40 border border-zinc-800 rounded-2xl p-4 hover:border-cyan-500/30 transition"
+                >
+                  <div className="flex gap-3 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                      ✦
+                    </div>
 
-      <!-- FOOD -->
-      <div class="card food-card">
-        <div class="card-label"><span class="icon">🍱</span> Nutrition AI</div>
-        <div class="macro-rings">
-          <div class="macro-ring-item">
-            <svg class="ring-svg" viewBox="0 0 60 60">
-              <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(61,127,255,0.15)" stroke-width="7"/>
-              <circle cx="30" cy="30" r="24" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="40" transform="rotate(-90 30 30)"/>
-              <text x="30" y="35" text-anchor="middle" fill="white" font-size="11" font-family="Syne,sans-serif" font-weight="700">74%</text>
-            </svg>
-            <div class="macro-val">148g</div>
-            <div class="macro-name">Protein</div>
+                    <div>
+                      <p className="text-white leading-relaxed">{insight}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div class="macro-ring-item">
-            <svg class="ring-svg" viewBox="0 0 60 60">
-              <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(0,229,195,0.15)" stroke-width="7"/>
-              <circle cx="30" cy="30" r="24" fill="none" stroke="var(--accent3)" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="70" transform="rotate(-90 30 30)"/>
-              <text x="30" y="35" text-anchor="middle" fill="white" font-size="11" font-family="Syne,sans-serif" font-weight="700">54%</text>
-            </svg>
-            <div class="macro-val">240g</div>
-            <div class="macro-name">Carbs</div>
-          </div>
-          <div class="macro-ring-item">
-            <svg class="ring-svg" viewBox="0 0 60 60">
-              <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,179,71,0.15)" stroke-width="7"/>
-              <circle cx="30" cy="30" r="24" fill="none" stroke="var(--accent5)" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="90" transform="rotate(-90 30 30)"/>
-              <text x="30" y="35" text-anchor="middle" fill="white" font-size="11" font-family="Syne,sans-serif" font-weight="700">40%</text>
-            </svg>
-            <div class="macro-val">52g</div>
-            <div class="macro-name">Fat</div>
-          </div>
-        </div>
-        <button class="food-scan-btn">📸 Scan Food — AI Analyze</button>
-      </div>
 
-      <!-- AI INSIGHTS -->
-      <div class="card insights-card">
-        <div class="card-label"><span class="icon">✦</span> Predictive AI Insights</div>
-        <div class="insights-grid">
-          <div class="insight-item">
-            <div class="ai-badge">✦</div>
-            <div class="insight-tag it-predict">Prediction</div>
-            <div class="insight-text">Productivity likely to dip after 10:30 PM tonight based on your sleep trend.</div>
-            <div class="insight-time">Updated 12 min ago</div>
-          </div>
-          <div class="insight-item">
-            <div class="ai-badge">✦</div>
-            <div class="insight-tag it-alert">Alert</div>
-            <div class="insight-text">Vitamin D levels are below threshold. Consider 20 min of sunlight or supplementation.</div>
-            <div class="insight-time">Based on last blood report</div>
-          </div>
-          <div class="insight-item">
-            <div class="ai-badge">✦</div>
-            <div class="insight-tag it-tip">Wellness Tip</div>
-            <div class="insight-text">Your stress peaks on Wednesdays. A 10-minute walk before lunch may reduce cortisol.</div>
-            <div class="insight-time">Pattern from 3 weeks of data</div>
-          </div>
-          <div class="insight-item">
-            <div class="ai-badge">✦</div>
-            <div class="insight-tag it-info">Cycle Intel</div>
-            <div class="insight-text">You are in your high-energy follicular phase. Ideal for cognitive tasks and workouts.</div>
-            <div class="insight-time">Cycle day 8 of 28</div>
+          {/* FOOD + POSTURE */}
+          <div className="space-y-6">
+
+            <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+              <div className="flex justify-between items-center mb-5">
+                <h2 className="text-2xl font-bold">AI Food Scanner</h2>
+                <span className="text-cyan-400">Beta</span>
+              </div>
+
+              <div className="border-2 border-dashed border-cyan-500/30 rounded-3xl p-10 text-center hover:border-cyan-400 transition cursor-pointer">
+                <div className="text-6xl mb-4">📸</div>
+                <h3 className="text-xl font-bold">Upload Food Image</h3>
+                <p className="text-gray-400 mt-2">
+                  AI analyzes calories, oil, sugar, protein, and nutrients.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+              <h2 className="text-2xl font-bold mb-5">Posture Intelligence</h2>
+
+              <div className="flex items-center gap-6">
+                <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 border border-cyan-500/20 flex items-center justify-center text-6xl">
+                  🧍
+                </div>
+
+                <div>
+                  <h3 className="text-4xl font-bold text-cyan-400">71%</h3>
+                  <p className="text-gray-400 mt-1">Posture Score</p>
+
+                  <div className="mt-4 space-y-2 text-sm text-gray-300">
+                    <p>• Slight forward neck tilt detected</p>
+                    <p>• Eye distance is optimal</p>
+                    <p>• Stretch reminder recommended</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- WEEKLY ACTIVITY -->
-      <div class="card activity-card">
-        <div class="card-label"><span class="icon">◉</span> Weekly Activity</div>
-        <div class="week-grid" id="weekGrid"></div>
-      </div>
+        {/* FAMILY + GAMIFICATION */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-      <!-- POSTURE -->
-      <div class="card posture-card">
-        <div class="card-label"><span class="icon">🧍</span> Posture & Eye Health</div>
-        <div class="posture-viz">
-          <div class="posture-figure">
-            <div class="pf-head"></div>
-            <div class="pf-spine" style="transform:translateX(-50%) rotate(4deg)"></div>
-            <div class="pf-hip"></div>
+          {/* FAMILY */}
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+            <h2 className="text-2xl font-bold mb-6">Family Health Hub</h2>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { name: 'Mum', status: 'Healthy', emoji: '👩' },
+                { name: 'Dad', status: 'Monitor BP', emoji: '👨' },
+                { name: 'Nanu', status: 'Missed Pill', emoji: '👴' },
+                { name: 'Brother', status: 'Active', emoji: '👦' },
+              ].map((member, index) => (
+                <div
+                  key={index}
+                  className="bg-black/40 border border-zinc-800 rounded-2xl p-4 text-center hover:border-cyan-500/30 transition"
+                >
+                  <div className="text-5xl mb-3">{member.emoji}</div>
+                  <h3 className="text-lg font-bold">{member.name}</h3>
+                  <p className="text-gray-400 mt-1">{member.status}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div class="posture-details">
-            <div class="posture-score">71<span style="font-size:16px;color:var(--text3)">/100</span></div>
-            <div class="posture-issues">
-              <div class="posture-issue"><span class="issue-dot" style="background:var(--accent5)"></span>Forward head tilt detected</div>
-              <div class="posture-issue"><span class="issue-dot" style="background:var(--accent4)"></span>Right shoulder drop</div>
-              <div class="posture-issue"><span class="issue-dot" style="background:var(--accent3)"></span>Eye distance: Optimal</div>
+
+          {/* MISSIONS */}
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Wellness XP</h2>
+              <span className="text-cyan-400">Level 14</span>
+            </div>
+
+            <div className="w-full h-4 bg-black/50 rounded-full overflow-hidden mb-6">
+              <div className="h-full w-[68%] bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full" />
+            </div>
+
+            <div className="space-y-4">
+              {missions.map((mission, index) => (
+                <div
+                  key={index}
+                  className="bg-black/40 border border-zinc-800 rounded-2xl p-4"
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold">{mission.title}</h3>
+                    <span className="text-cyan-400">{mission.progress}%</span>
+                  </div>
+
+                  <div className="w-full h-3 bg-zinc-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"
+                      style={{ width: `${mission.progress}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-
-      <!-- FAMILY -->
-      <div class="card family-card">
-        <div class="card-label"><span class="icon">⌂</span> Family Health Hub</div>
-        <div class="family-members">
-          <div class="member-card">
-            <div class="member-avatar ok">👩</div>
-            <div class="member-name">Mum</div>
-            <div class="member-status">Medication ✓</div>
-            <div class="member-badge badge-ok">Healthy</div>
-          </div>
-          <div class="member-card">
-            <div class="member-avatar warn">👨</div>
-            <div class="member-name">Dad</div>
-            <div class="member-status">BP: 138/90</div>
-            <div class="member-badge badge-warn">Monitor</div>
-          </div>
-          <div class="member-card">
-            <div class="member-avatar warn">👴</div>
-            <div class="member-name">Nanu</div>
-            <div class="member-status">Missed 1 pill</div>
-            <div class="member-badge badge-warn">Reminder!</div>
-          </div>
-          <div class="member-card">
-            <div class="member-avatar ok">👦</div>
-            <div class="member-name">Bhai</div>
-            <div class="member-status">Active today</div>
-            <div class="member-badge badge-ok">Healthy</div>
-          </div>
-          <div class="member-card" style="border-style:dashed;opacity:0.6">
-            <div class="member-avatar" style="background:var(--surface2);font-size:22px">+</div>
-            <div class="member-name" style="color:var(--text3)">Add</div>
-            <div class="member-status">Member</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- MEDICAL REPORT -->
-      <div class="card report-card">
-        <div class="card-label"><span class="icon">⊞</span> Report Translator</div>
-        <div class="report-upload">
-          <div class="report-upload-icon">📄</div>
-          <div class="report-upload-text"><strong>Upload Report</strong><br>Blood test, prescription, scan<br>AI explains in plain language</div>
-        </div>
-        <div class="report-results">
-          <div class="report-item"><span class="report-name">Hemoglobin</span><span class="report-value rv-normal">13.8 g/dL ✓</span></div>
-          <div class="report-item"><span class="report-name">Vitamin D</span><span class="report-value rv-low">18 ng/mL ↓</span></div>
-          <div class="report-item"><span class="report-name">TSH (Thyroid)</span><span class="report-value rv-normal">2.1 mIU/L ✓</span></div>
-          <div class="report-item"><span class="report-name">Ferritin</span><span class="report-value rv-high">9 ng/mL ↑</span></div>
-        </div>
-      </div>
-
-      <!-- GAMIFICATION -->
-      <div class="card game-card">
-        <div class="card-label"><span class="icon">⚡</span> Wellness XP — Level 14 · Health Warrior</div>
-        <div class="xp-bar-wrap">
-          <div class="xp-bar-fill"></div>
-        </div>
-        <div class="xp-labels"><span>6,800 XP</span><span>2,200 XP to Level 15</span><span>10,000 XP</span></div>
-        <div class="missions-row" id="missions"></div>
-      </div>
-
-    </div><!-- end .content -->
-  </main>
-</div>
-
-<!-- VOICE FAB -->
-<div class="voice-fab" title="Voice AI Assistant">🎙️</div>
-
-<!-- EMERGENCY CARD -->
-<div class="emergency-card">
-  <div class="qr-placeholder">
-    <div class="qr-cell"></div><div class="qr-cell" style="background:var(--bg)"></div><div class="qr-cell"></div>
-    <div class="qr-cell" style="background:var(--bg)"></div><div class="qr-cell"></div><div class="qr-cell" style="background:var(--bg)"></div>
-    <div class="qr-cell"></div><div class="qr-cell" style="background:var(--bg)"></div><div class="qr-cell"></div>
-  </div>
-  <div class="emergency-text">
-    <strong>🆘 Emergency Card</strong>
-    <span>Blood: B+ · Allergies: Penicillin</span>
-  </div>
-</div>
-
-<script>
-  // Date
-  const d = new Date();
-  document.getElementById('dateStr').textContent =
-    d.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-  // Sleep bars
-  const sleepData = [
-    {type:'deep',h:0.7},{type:'light',h:0.5},{type:'rem',h:0.9},
-    {type:'light',h:0.6},{type:'deep',h:1.0},{type:'rem',h:0.75},
-    {type:'light',h:0.4},{type:'deep',h:0.85},{type:'light',h:0.55},
-    {type:'rem',h:0.65},{type:'light',h:0.3},{type:'deep',h:0.9},
-    {type:'light',h:0.45},{type:'rem',h:0.7},{type:'light',h:0.5},
-    {type:'deep',h:0.6},{type:'light',h:0.35},{type:'rem',h:0.8},
-    {type:'light',h:0.55},{type:'deep',h:0.75}
-  ];
-  const slBars = document.getElementById('sleepBars');
-  sleepData.forEach(s => {
-    const bar = document.createElement('div');
-    bar.className = `sleep-bar ${s.type}`;
-    bar.style.height = `${Math.round(s.h * 50)}px`;
-    slBars.appendChild(bar);
-  });
-
-  // Weekly activity
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const actVals = [68,82,45,91,60,100,38];
-  const colors = [
-    'linear-gradient(180deg,#3d7fff,rgba(61,127,255,0.3))',
-    'linear-gradient(180deg,#7b4fff,rgba(123,79,255,0.3))',
-    'linear-gradient(180deg,#ff6b8a,rgba(255,107,138,0.3))',
-    'linear-gradient(180deg,#00e5c3,rgba(0,229,195,0.3))',
-    'linear-gradient(180deg,#3d7fff,rgba(61,127,255,0.3))',
-    'linear-gradient(180deg,#ffb347,rgba(255,179,71,0.3))',
-    'linear-gradient(180deg,#7b4fff,rgba(123,79,255,0.15))',
-  ];
-  const wGrid = document.getElementById('weekGrid');
-  days.forEach((day,i) => {
-    const col = document.createElement('div');
-    col.className = 'day-col' + (i===4?' today':'');
-    col.innerHTML = `<div class="day-bar-track"><div class="day-bar-fill" style="height:0;background:${colors[i]}"></div></div><div class="day-label">${day}</div>`;
-    wGrid.appendChild(col);
-    setTimeout(()=>{
-      col.querySelector('.day-bar-fill').style.height = actVals[i]+'%';
-    }, 200 + i*80);
-  });
-
-  // Missions
-  const missionData = [
-    {icon:'💧',title:'Drink 2L Water',xp:'+50 XP',prog:70,done:false},
-    {icon:'🚶',title:'10k Steps',xp:'+80 XP',prog:100,done:true},
-    {icon:'🧘',title:'Meditate 10min',xp:'+40 XP',prog:100,done:true},
-    {icon:'😴',title:'Sleep by 11 PM',xp:'+60 XP',prog:0,done:false},
-    {icon:'📵',title:'No screen 1hr',xp:'+45 XP',prog:40,done:false},
-    {icon:'🥗',title:'Balanced Meal',xp:'+55 XP',prog:100,done:true},
-  ];
-  const mRow = document.getElementById('missions');
-  missionData.forEach(m => {
-    const el = document.createElement('div');
-    el.className = 'mission' + (m.done?' complete':'');
-    el.innerHTML = `
-      ${m.done?'<div class="check-badge">✓</div>':''}
-      <div class="mission-icon">${m.icon}</div>
-      <div class="mission-title">${m.title}</div>
-      <div class="mission-xp">${m.xp}</div>
-      <div class="mission-progress"><div class="mission-progress-fill" style="width:${m.prog}%"></div></div>
-    `;
-    mRow.appendChild(el);
-  });
-
-  // Sidebar nav
-  document.querySelectorAll('.nav-item').forEach(item=>{
-    item.addEventListener('click',function(){
-      document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-      this.classList.add('active');
-    });
-  });
-</script>
-</body>
-</html>
+    </div>
+  );
+}
